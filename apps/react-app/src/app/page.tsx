@@ -6,7 +6,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative h-[80vh] w-full">
         <Image
-          src="/images/nagoya-hero.jpg" // replace with your hero image path
+          src="/images/nagoya-hero.jpg" // replace with hero image path
           alt="Nagoya cityscape"
           fill
           priority

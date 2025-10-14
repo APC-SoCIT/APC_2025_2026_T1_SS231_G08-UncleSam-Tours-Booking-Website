@@ -1,0 +1,24 @@
+// UncleSam Tours ERD
+digraph {
+	fontsize=10 rankdir=LR
+	USER [label="USER|user_id (PK)|username|email|phone|password_hash|role|created_at|updated_at" shape=record]
+	TOUR [label="TOUR|tour_id (PK)|title|description|base_price|duration_days|capacity|status|dest_id (FK)|created_at|updated_at" shape=record]
+	DESTINATION [label="DESTINATION|dest_id (PK)|name|country|description" shape=record]
+	TOUR_SCHEDULE [label="TOUR_SCHEDULE|schedule_id (PK)|tour_id (FK)|start_date|end_date|availability" shape=record]
+	BOOKING [label="BOOKING|booking_id (PK)|user_id (FK)|schedule_id (FK)|pax_count|total_price|status|created_at|updated_at" shape=record]
+	PAYMENT [label="PAYMENT|payment_id (PK)|booking_id (FK)|type|amount|method|status|paid_at|gateway_ref" shape=record]
+	ITINERARY_ITEM [label="ITINERARY_ITEM|item_id (PK)|tour_id (FK)|day_number|time_range|location|description" shape=record]
+	SUPPORT_TICKET [label="SUPPORT_TICKET|ticket_id (PK)|user_id (FK)|subject|message|status|created_at|updated_at" shape=record]
+	REVIEW [label="REVIEW|review_id (PK)|user_id (FK)|tour_id (FK)|rating|comment|created_at" shape=record]
+	REPORT [label="REPORT|report_id (PK)|owner_id (FK)|type|data_json|created_at" shape=record]
+	USER -> BOOKING
+	TOUR -> TOUR_SCHEDULE
+	TOUR_SCHEDULE -> BOOKING
+	BOOKING -> PAYMENT
+	TOUR -> ITINERARY_ITEM
+	DESTINATION -> TOUR
+	USER -> SUPPORT_TICKET
+	USER -> REVIEW
+	TOUR -> REVIEW
+	USER -> REPORT
+}
