@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import OfferModal from './components/OfferModal';
 
 const heroSlides = [
   {
@@ -30,6 +31,61 @@ const heroSlides = [
 
 export default function HomePage() {
   const [slide, setSlide] = useState(0);
+  const [selectedOffer, setSelectedOffer] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const tours = [
+    {
+      title: 'Fukui Tour',
+      duration: '12 Hours',
+      destinations: 5,
+      price: '¥78,000',
+      orig_price: '¥88,000',
+      img: '/images/fukui.jpg',
+      desc: 'Stunning coastal landscapes, historic temples, and vibrant culture.',
+      destinationsList: ['Fukui Castle', 'Echizen Washi Village', 'Tojinbo Cliffs', 'Ikebukuro Park', 'Local Markets'],
+      inclusions: ['Private Guide', 'Transport', 'Lunch Included', 'Photo Stops'],
+    },
+    {
+      title: 'Tokyo Disney Transfer',
+      duration: '12 Hours',
+      destinations: 2,
+      price: '¥60,000',
+      img: '/images/disney.jpg',
+      desc: 'Experience the magic of Disney with private transfer service.',
+      destinationsList: ['Tokyo Disneyland', 'Tokyo DisneySea'],
+      inclusions: ['Private Transfer', 'English-speaking Driver', 'Hotel Pickup/Drop-off'],
+    },
+    {
+      title: 'Nagoya Tour Package',
+      duration: '12 Hours',
+      destinations: 4,
+      price: '¥85,000',
+      orig_price: '¥95,000',
+      img: '/images/nagoya.jpg',
+      desc: 'All major attractions in one comprehensive Nagoya tour.',
+      destinationsList: ['Nagoya Castle', 'Osu Shopping District', 'Atsuta Shrine', 'Sakae District'],
+      inclusions: ['Tour Guide', 'Hotel Pickup', 'Dinner Included', 'Souvenir'],
+    },
+  ];
+
+  const handleOpenModal = (tour: any) => {
+    setSelectedOffer({
+      title: tour.title,
+      price: tour.price,
+      image: tour.img,
+      description: tour.desc,
+      destinations: tour.destinationsList,
+      inclusions: tour.inclusions,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOffer(null);
+  };
+
   return (
     <main className="flex flex-col bg-white">
       {/* Hero Section */}
@@ -63,7 +119,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      
 
       {/* Featured Experiences */}
       <section className="container mx-auto px-4 py-16">
@@ -72,34 +127,7 @@ export default function HomePage() {
           Handpicked travel packages designed to create unforgettable memories.
         </p>
         <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: 'Fukui Tour',
-              duration: '12 Hours',
-              destinations: 5,
-              price: '¥78,000',
-              orig_price: '¥88,000',
-              img: '/images/fukui.jpg',
-              desc: 'Stunning coastal landscapes, historic temples, and vibrant culture.',
-            },
-            {
-              title: 'Tokyo Disney Transfer',
-              duration: '12 Hours',
-              destinations: 2,
-              price: '¥60,000',
-              img: '/images/disney.jpg',
-              desc: 'Experience the magic of Disney with private transfer service.',
-            },
-            {
-              title: 'Nagoya Tour Package',
-              duration: '12 Hours',
-              destinations: 4,
-              price: '¥85,000',
-              orig_price: '¥95,000',
-              img: '/images/nagoya.jpg',
-              desc: 'All major attractions in one comprehensive Nagoya tour.',
-            },
-          ].map((tour) => (
+          {tours.map((tour) => (
             <div key={tour.title} className="overflow-hidden rounded-lg border shadow">
               <Image
                 src={tour.img}
@@ -110,7 +138,8 @@ export default function HomePage() {
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-black">{tour.title}</h3>
-                <p className="mt-2 text-gray-600">{tour.desc}</p><p className="mt-4 flex items-center text-sm text-gray-500">
+                <p className="mt-2 text-gray-600">{tour.desc}</p>
+                <p className="mt-4 flex items-center text-sm text-gray-500">
                   <ClockIcon className="h-4 w-4 mr-2 inline" />
                   {tour.duration}
                 </p>
@@ -118,13 +147,16 @@ export default function HomePage() {
                   <MapPinIcon className="h-4 w-4 mr-2 inline" />
                   {tour.destinations} Destinations
                 </p>
-                <p className="mt-4 text-lg font-bold text-red-600"><span className="line-through font-regular text-gray-500">{tour.orig_price}</span> {tour.price} <span className="text-sm text-gray-500">per pax</span></p>
-                <a
-                  href="/book"
+                <p className="mt-4 text-lg font-bold text-red-600">
+                  <span className="line-through font-regular text-gray-500">{tour.orig_price}</span> {tour.price}{' '}
+                  <span className="text-sm text-gray-500">per pax</span>
+                </p>
+                <button
+                  onClick={() => handleOpenModal(tour)}
                   className="mt-4 inline-block rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
                 >
                   View Details
-                </a>
+                </button>
               </div>
             </div>
           ))}
@@ -169,8 +201,13 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Modal */}
+      <OfferModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        offer={selectedOffer}
+      />
     </main>
   );
 }
-
-// Note: Ensure to replace image paths and links with actual routes and images in the project.

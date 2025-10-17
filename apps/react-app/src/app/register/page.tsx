@@ -31,8 +31,8 @@ export default function RegisterPage() {
       // 1️⃣ Hash password before saving
       const hashedPassword = await bcrypt.hash(formData.password, 10);
 
-      // 2️⃣ Insert into Supabase USER table
-      const { error } = await supabase.from("USER").insert([
+      // 2️⃣ Insert into Supabase user table
+      const { error } = await supabase.from("user").insert([
         {
           username: formData.username,
           email: formData.email,
