@@ -19,3 +19,6 @@ https://www.canva.com/design/DAGpv9Ywkw8/pARriYdwa9BEyDKENUUSUg/edit?utm_content
 ## Release Plan
 
 https://asiapacificcollege-my.sharepoint.com/:w:/g/personal/sacamama_student_apc_edu_ph/ETc1EcEg-aRNt5RT81aqkDABa75WEFyjWUm2Vc2yoKehHg?e=drF2Yk
+
+## Fully Dresse Use Case
+https://asiapacificcollege-my.sharepoint.com/:w:/g/personal/addelacruz2_student_apc_edu_ph/ERHaIUVoD8dKubEXLbF_hjkB_FYfb314fh9c5Zzqrno7Jg?e=J0BTYO
