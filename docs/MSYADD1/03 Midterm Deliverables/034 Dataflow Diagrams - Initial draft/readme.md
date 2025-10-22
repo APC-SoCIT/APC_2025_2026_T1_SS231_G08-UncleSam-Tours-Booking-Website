@@ -4,7 +4,7 @@
 
 # LVL 1 DFD
 
-<img width="2895" height="2895" alt="FINAL DFD LVL 1" src="https://github.com/user-attachments/assets/01348dfc-6946-4121-b8bd-1415fdcd32d8" />
+<img width="2968" height="2800" alt="FINAL DFD LVL 1" src="https://github.com/user-attachments/assets/5cd41d83-6ac7-488d-9276-a472afaa4769" />
 
 # LVL 2 DFD
 
