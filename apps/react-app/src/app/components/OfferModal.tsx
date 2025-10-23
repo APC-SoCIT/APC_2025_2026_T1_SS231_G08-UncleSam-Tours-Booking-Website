@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation"; // added navigation to itinerary page
 
 interface OfferModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ interface OfferModalProps {
 }
 
 export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) {
+  const router = useRouter(); // <-- create router instance
+
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "auto";
@@ -24,10 +27,18 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
 
   if (!isOpen || !offer) return null;
 
+  // 🔽 handlers for button clicks
+  const handleFullPayment = () => {
+    router.push("/itinerary");
+  };
+
+  const handleDownPayment = () => {
+    router.push("/itinerary");
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full mx-4 p-6 relative">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl"
@@ -36,7 +47,6 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
         </button>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Left Column */}
           <div>
             <h2 className="text-2xl font-semibold mb-3 text-black">{offer.title}</h2>
             <Image
@@ -54,7 +64,6 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
             </div>
           </div>
 
-          {/* Right Column */}
           <div>
             <h3 className="font-semibold text-lg mb-2 text-black">Destinations</h3>
             <ul className="mb-4 text-sm text-gray-700">
@@ -70,7 +79,6 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
               ))}
             </ul>
 
-            {/* Travelers */}
             <h3 className="font-semibold text-lg mb-2 text-black">Number of Travelers</h3>
             <div className="flex items-center gap-2 mb-4">
               <button className="border border-gray-300 px-2 py-1 rounded text-gray-800 hover:bg-gray-100">−</button>
@@ -78,7 +86,6 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
               <button className="border border-gray-300 px-2 py-1 rounded text-gray-800 hover:bg-gray-100">+</button>
             </div>
 
-            {/* Price Section */}
             <div className="border border-gray-300 rounded-lg p-3 text-sm mb-4 bg-gray-50">
               <div className="flex justify-between text-gray-700 mb-2">
                 <span>Price per pax:</span>
@@ -95,10 +102,16 @@ export default function OfferModal({ isOpen, onClose, offer }: OfferModalProps) 
             </div>
 
             <div className="flex gap-3">
-              <button className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition">
+              <button
+                onClick={handleFullPayment}
+                className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition"
+              >
                 Get Tickets for {offer.price}
               </button>
-              <button className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition">
+              <button
+                onClick={handleDownPayment}
+                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+              >
                 Downpayment ₱10,000
               </button>
             </div>
