@@ -10,3 +10,6 @@ https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetec
 
 ## Grantt Charts
 https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetech-unclesam-tours-booking-website/gantt?query
+
+## AY 2025-2026 T1 Sprint 01 Board
+https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetech-unclesam-tours-booking-website/boards/
