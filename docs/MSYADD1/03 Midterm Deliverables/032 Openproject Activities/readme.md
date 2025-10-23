@@ -4,3 +4,6 @@ https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetec
 
 ## Backlogs
 https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetech-unclesam-tours-booking-website/backlogs
+
+## Roadmap 
+https://openproject2025.apc.edu.ph/projects/apc-2025-2026-t1-ss231-g08-updatetech-unclesam-tours-booking-website/roadmap
