@@ -15,13 +15,27 @@ const navigation = [
 export default function Header() {
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
   useEffect(() => {
-    // Check localStorage for user session
+    // Load user
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
+
+    // Fetch PHP→JPY exchange rate from fxratesapi
+    const fetchRate = async () => {
+      try {
+        const response = await fetch('https://api.fxratesapi.com/latest?base=PHP&symbols=JPY');
+        const data = await response.json();
+        if (data && data.rates && data.rates.JPY) {
+          setExchangeRate(data.rates.JPY);
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+      }
+    };
+
+    fetchRate();
   }, []);
 
   const handleLogout = () => {
@@ -58,7 +72,16 @@ export default function Header() {
         </nav>
 
         {/* Right-side section */}
-        <div className="ml-4 flex items-center space-x-4">
+        <div className="ml-4 flex items-center space-x-6">
+          {/* FX Rate */}
+          <div className="text-sm font-medium">
+            {exchangeRate ? (
+              <span>₱1 = ¥{exchangeRate.toFixed(2)}</span>
+            ) : (
+              <span>Loading rate...</span>
+            )}
+          </div>
+
           {user ? (
             <>
               <span className="text-sm font-medium">
