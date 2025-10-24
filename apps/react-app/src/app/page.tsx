@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import OfferModal from './components/OfferModal';
+import { supabase } from '@/lib/supabaseClient';
 
 const heroSlides = [
   {
@@ -31,43 +32,52 @@ const heroSlides = [
 
 export default function HomePage() {
   const [slide, setSlide] = useState(0);
+  const [tours, setTours] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const tours = [
-    {
-      title: 'Fukui Tour',
-      duration: '12 Hours',
-      destinations: 5,
-      price: '¥78,000',
-      orig_price: '¥88,000',
-      img: '/images/fukui.jpg',
-      desc: 'Stunning coastal landscapes, historic temples, and vibrant culture.',
-      destinationsList: ['Fukui Castle', 'Echizen Washi Village', 'Tojinbo Cliffs', 'Ikebukuro Park', 'Local Markets'],
-      inclusions: ['Private Guide', 'Transport', 'Lunch Included', 'Photo Stops'],
-    },
-    {
-      title: 'Tokyo Disney Transfer',
-      duration: '12 Hours',
-      destinations: 2,
-      price: '¥60,000',
-      img: '/images/disney.jpg',
-      desc: 'Experience the magic of Disney with private transfer service.',
-      destinationsList: ['Tokyo Disneyland', 'Tokyo DisneySea'],
-      inclusions: ['Private Transfer', 'English-speaking Driver', 'Hotel Pickup/Drop-off'],
-    },
-    {
-      title: 'Nagoya Tour Package',
-      duration: '12 Hours',
-      destinations: 4,
-      price: '¥85,000',
-      orig_price: '¥95,000',
-      img: '/images/nagoya.jpg',
-      desc: 'All major attractions in one comprehensive Nagoya tour.',
-      destinationsList: ['Nagoya Castle', 'Osu Shopping District', 'Atsuta Shrine', 'Sakae District'],
-      inclusions: ['Tour Guide', 'Hotel Pickup', 'Dinner Included', 'Souvenir'],
-    },
-  ];
+  useEffect(() => {
+    let mounted = true;
+    const fetchOffers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase.from('offers').select('*');
+        if (error) throw error;
+
+        if (!mounted) return;
+
+        // Map DB rows to the structure used by the UI.
+        const mapped = (data || []).map((row: any) => ({
+          id: row.offer_id,
+          title: row.offer_title ?? 'Untitled',
+          desc: row.description ?? '',
+          price: row.price_id ? `¥${Number(row.price_id).toLocaleString()}` : 'TBD',
+          duration: '12 Hours',
+          destinations: 3, // adjust or link with another table if you have destinations
+          img: `/images/${row.offer_title.toLowerCase().replace(/\s+/g, '-')}.jpg`, // auto-map image names
+          orig_price: null,
+          destinationsList: [],
+          inclusions: [],
+        })).splice(0, 3); // limit to 3 featured
+
+        setTours(mapped);
+      } catch (err: any) {
+        console.error('Failed to load offers', err);
+        setError(err.message ?? 'Failed to load offers');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleOpenModal = (tour: any) => {
     setSelectedOffer({
@@ -126,41 +136,52 @@ export default function HomePage() {
         <p className="mt-2 text-center text-gray-600">
           Handpicked travel packages designed to create unforgettable memories.
         </p>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {tours.map((tour) => (
-            <div key={tour.title} className="overflow-hidden rounded-lg border shadow">
-              <Image
-                src={tour.img}
-                alt={tour.title}
-                width={600}
-                height={400}
-                className="h-48 w-full object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-black">{tour.title}</h3>
-                <p className="mt-2 text-gray-600">{tour.desc}</p>
-                <p className="mt-4 flex items-center text-sm text-gray-500">
-                  <ClockIcon className="h-4 w-4 mr-2 inline" />
-                  {tour.duration}
-                </p>
-                <p className="mt-4 flex items-center text-sm text-gray-500">
-                  <MapPinIcon className="h-4 w-4 mr-2 inline" />
-                  {tour.destinations} Destinations
-                </p>
-                <p className="mt-4 text-lg font-bold text-red-600">
-                  <span className="line-through font-regular text-gray-500">{tour.orig_price}</span> {tour.price}{' '}
-                  <span className="text-sm text-gray-500">per pax</span>
-                </p>
-                <button
-                  onClick={() => handleOpenModal(tour)}
-                  className="mt-4 inline-block rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                >
-                  View Details
-                </button>
+
+        {loading ? (
+          <p className="text-center mt-8 text-gray-500">Loading offers…</p>
+        ) : error ? (
+          <p className="text-center mt-8 text-red-600">Error loading offers: {error}</p>
+        ) : tours.length === 0 ? (
+          <p className="text-center mt-8 text-gray-500">No offers available right now.</p>
+        ) : (
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {tours.map((tour) => (
+              <div key={tour.id ?? tour.title} className="overflow-hidden rounded-lg border shadow">
+                <Image
+                  src={tour.img}
+                  alt={tour.title}
+                  width={600}
+                  height={400}
+                  className="h-48 w-full object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-black">{tour.title}</h3>
+                  <p className="mt-2 text-gray-600">{tour.desc}</p>
+                  <p className="mt-4 flex items-center text-sm text-gray-500">
+                    <ClockIcon className="h-4 w-4 mr-2 inline" />
+                    {tour.duration}
+                  </p>
+                  <p className="mt-4 flex items-center text-sm text-gray-500">
+                    <MapPinIcon className="h-4 w-4 mr-2 inline" />
+                    {tour.destinations} Destinations
+                  </p>
+                  <p className="mt-4 text-lg font-bold text-red-600">
+                    {tour.orig_price && <span className="line-through font-regular text-gray-500 mr-2">{tour.orig_price}</span>}
+                    {tour.price}{' '}
+                    <span className="text-sm text-gray-500">per pax</span>
+                  </p>
+                  <button
+                    onClick={() => handleOpenModal(tour)}
+                    className="mt-4 inline-block rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
         <div className="mt-10 text-center">
           <a
             href="/offers"
