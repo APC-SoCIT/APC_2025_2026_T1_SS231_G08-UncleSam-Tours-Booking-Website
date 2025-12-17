@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-// Define the shape of a destination
 interface Destination {
   id: string;
   name: string;
@@ -10,66 +11,27 @@ interface Destination {
   selected: boolean;
 }
 
-// 1. DATA: Defined destinations for each city so the list updates dynamically
-const DESTINATIONS_DATA: Record<string, Destination[]> = {
-  Nagoya: [
-    { id: "nagoya-castle", name: "Nagoya Castle", description: "Historic castle in the heart of Nagoya", selected: true },
-    { id: "legoland", name: "Legoland", description: "Family fun at Legoland Japan", selected: true },
-    { id: "science-museum", name: "Science Museum", description: "Interactive science exhibits", selected: false },
-    { id: "oasis-21", name: "Oasis 21", description: "Modern shopping and entertainment complex", selected: true },
-    { id: "ghibli-park", name: "Ghibli Park", description: "Explore Studio Ghibli's amuse park", selected: true },
-    { id: "aquarium", name: "Port of Nagoya Public Aquarium", description: "Massive marine attraction", selected: false },
-  ],
-  Tokyo: [
-    { id: "sensoji", name: "Senso-ji Temple", description: "Ancient Buddhist temple in Asakusa", selected: true },
-    { id: "skytree", name: "Tokyo Skytree", description: "The tallest tower in the world", selected: true },
-    { id: "shibuya-crossing", name: "Shibuya Crossing", description: "Famous scramble crossing", selected: true },
-    { id: "teamlab", name: "teamLab Planets", description: "Immersive digital art museum", selected: true },
-    { id: "disneyland", name: "Tokyo Disneyland", description: "The happiest place on earth", selected: false },
-  ],
-  Osaka: [
-    { id: "dotonbori", name: "Dotonbori", description: "Iconic food and neon light district", selected: true },
-    { id: "usj", name: "Universal Studios Japan", description: "Super Nintendo World & Harry Potter", selected: true },
-    { id: "osaka-castle", name: "Osaka Castle", description: "Historical landmark and park", selected: true },
-    { id: "aquarium-kaiyukan", name: "Kaiyukan Aquarium", description: "One of the largest aquariums", selected: false },
-  ],
-  Kyoto: [
-    { id: "fushimi", name: "Fushimi Inari", description: "Thousands of vermilion torii gates", selected: true },
-    { id: "kinkakuji", name: "Kinkaku-ji", description: "The Golden Pavilion", selected: true },
-    { id: "arashiyama", name: "Arashiyama Bamboo Grove", description: "Scenic bamboo forest", selected: true },
-    { id: "kiyomizu", name: "Kiyomizu-dera", description: "Historic temple with wooden stage", selected: false },
-  ]
-};
-
-// Pricing base per city (optional logic)
-const PRICING: Record<string, number> = {
-  Nagoya: 85000,
-  Tokyo: 95000,
-  Osaka: 90000,
-  Kyoto: 92000
-};
-
 export default function ItineraryPage() {
   const [location, setLocation] = useState("Nagoya");
   const [travelDate, setTravelDate] = useState("2025-06-10");
   const [travelers, setTravelers] = useState(1);
-  
-  // Initialize with Nagoya data
-  const [destinations, setDestinations] = useState<Destination[]>(DESTINATIONS_DATA["Nagoya"]);
+  const [destinations, setDestinations] = useState<Destination[]>([
+    { id: "nagoya-castle", name: "Nagoya Castle", description: "Historic castle in the heart of Nagoya", selected: true },
+    { id: "legoland", name: "Legoland", description: "Family fun at Legoland Japan", selected: true },
+    { id: "science-museum", name: "Science Museum", description: "Interactive science exhibits", selected: false },
+    { id: "oasis-21", name: "Oasis 21", description: "Modern shopping and entertainment complex", selected: true },
+    { id: "noritake-garden", name: "Noritake Garden", description: "Beautiful gardens and pottery museum", selected: false },
+    { id: "ghibli-park", name: "Ghibli Park", description: "Explore Studio Ghibli's amuse park", selected: true },
+    { id: "aquarium", name: "Port of Nagoya Public Aquarium", description: "Massive marine attraction", selected: false },
+    { id: "scmaglev", name: "Scmaglev and Railway Park", description: "Railway museum with interactive exhibits", selected: false },
+  ]);
   const [transportIncluded, setTransportIncluded] = useState(true);
 
-  // 2. EFFECT: Update destinations when location changes
-  useEffect(() => {
-    if (DESTINATIONS_DATA[location]) {
-      setDestinations(DESTINATIONS_DATA[location]);
-    }
-  }, [location]);
-
-  const pricePerPerson = PRICING[location] || 85000;
+  const pricePerPerson = 85000;
   const selectedCount = destinations.filter(d => d.selected).length;
   const maxDestinations = 5;
   const totalPrice = pricePerPerson * travelers;
-  const downpayment = 10000; // In Pesos
+  const downpayment = 10000;
 
   const toggleDestination = (id: string) => {
     setDestinations(prev =>
@@ -99,10 +61,8 @@ export default function ItineraryPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
-          
           {/* Left Column - Configuration */}
           <div className="lg:col-span-2 space-y-6">
-            
             {/* Location and Date */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -120,9 +80,10 @@ export default function ItineraryPage() {
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
-                    {Object.keys(DESTINATIONS_DATA).map(city => (
-                        <option key={city} value={city}>{city}</option>
-                    ))}
+                    <option value="Nagoya">Nagoya</option>
+                    <option value="Tokyo">Tokyo</option>
+                    <option value="Osaka">Osaka</option>
+                    <option value="Kyoto">Kyoto</option>
                   </select>
                 </div>
 
@@ -170,7 +131,7 @@ export default function ItineraryPage() {
             {/* Choose Destinations */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Destinations</h2>
-              <p className="text-gray-600 mb-6">Select up to 5 places in {location} you'd like to visit</p>
+              <p className="text-gray-600 mb-6">Select up to 5 places you'd like to visit</p>
 
               <div className="grid md:grid-cols-2 gap-4">
                 {destinations.map((dest) => (
@@ -206,7 +167,7 @@ export default function ItineraryPage() {
             {/* Transportation Options */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Transportation Options</h2>
-              <p className="text-gray-600 mb-6">Private van included in all packages.</p>
+              <p className="text-gray-600 mb-6">Private van included in all packages. Add airport transfer if needed.</p>
 
               <div
                 onClick={() => setTransportIncluded(!transportIncluded)}
@@ -243,8 +204,7 @@ export default function ItineraryPage() {
 
               <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-6">
                 <h3 className="text-red-800 font-bold text-lg mb-1">{location} Tour Package</h3>
-                <div className="text-3xl font-bold text-red-600">¥{totalPrice.toLocaleString()}</div>
-                <div className="text-sm text-gray-500 mt-1">(Approx. ₱{(totalPrice * 0.38).toLocaleString()})</div>
+                <div className="text-3xl font-bold text-red-600">¥{pricePerPerson.toLocaleString()}</div>
               </div>
 
               <div className="space-y-4 mb-6">
